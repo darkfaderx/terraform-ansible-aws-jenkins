@@ -53,6 +53,16 @@ resource "null_resource" "ansible" {
         echo host_key_checking = False >> ansible.cfg;
         echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
         echo deprecation_warnings=False >> ansible.cfg;
+        echo gathering = smart >> ansible.cfg;
+        echo fact_caching = jsonfile >> ansible.cfg;
+        echo fact_caching_connection = /tmp/facts_cache >> ansible.cfg;
+        echo fact_caching_timeout = 7200 >> ansible.cfg;
+        echo forks = 100 >> ansible.cfg;
+        echo bin_ansible_callbacks=True >> ansible.cfg;
+        echo connection_plugins = ../ansible/connection_plugins >> ansible.cfg;
+        echo [ssh_connection] >> ansible.cfg;
+        echo pipelining = True >> ansible.cfg;
+        echo control_path = /tmp/ansible-ssh-%%h-%%p-%%r >> ansible.cfg;
         echo [${var.env}] > inventory-${var.env};
         echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> inventory-${var.env};
         ansible-playbook -s test.yml
