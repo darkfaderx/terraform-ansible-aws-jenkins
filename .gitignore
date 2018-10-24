@@ -4,4 +4,4 @@
 *.tfstate.*
 *.terraform
 *.zip
-*.retry
+.retry

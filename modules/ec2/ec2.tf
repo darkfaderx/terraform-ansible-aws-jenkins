@@ -24,18 +24,20 @@ resource "aws_instance" "jenkins_master" {
 
 
     # This is where we configure the instance with ansible-playbook
-    provisioner "local-exec" {
-    command = <<EOT
-      echo [defaults] > ansible.cfg;
-      echo hostfile = ${var.env} >> ansible.cfg;
-      echo host_key_checking = False >> ansible.cfg;
-      echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
-      echo deprecation_warnings=False >> ansible.cfg;
-      echo [${var.env}] > ${var.env};
-      echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> ${var.env}
-      EOT
-
- }
+ #    provisioner "local-exec" {
+ #      #command = "sleep 220; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ~/amazon/jijeesh/jijeesh.pem -i '${aws_instance.jenkins_master.public_ip},' -e 'ansible_python_interpreter=/usr/bin/python3' master.yml"
+ #    command = <<EOT
+ #      echo [defaults] > ansible.cfg;
+ #      echo hostfile = ${var.env} >> ansible.cfg;
+ #      echo host_key_checking = False >> ansible.cfg;
+ #      echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
+ #      echo deprecation_warnings=False >> ansible.cfg;
+ #      echo [${var.env}] > ${var.env};
+ #      echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> ${var.env};
+ #      ansible-playbook -s test.yml
+ #      EOT
+ #
+ # }
     # provisioner "local-exec" {
     #
     #   command = "echo ${aws_instance.jenkins_master.public_ip} >> ${var.env}"
@@ -43,6 +45,22 @@ resource "aws_instance" "jenkins_master" {
     # }
 }
 
+resource "null_resource" "ansible" {
+    provisioner "local-exec" {
+      command = <<EOT
+        echo [defaults] > ansible.cfg;
+        echo hostfile = ${var.env} >> ansible.cfg;
+        echo host_key_checking = False >> ansible.cfg;
+        echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
+        echo deprecation_warnings=False >> ansible.cfg;
+        echo [${var.env}] > ${var.env};
+        echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> ${var.env};
+        ansible-playbook -s test.yml
+        EOT
+      on_failure = "continue"
+    }
+    depends_on = ["aws_instance.jenkins_master"]
+}
 output "public_ip" {
   value = "${aws_instance.jenkins_master.public_ip}"
 }
