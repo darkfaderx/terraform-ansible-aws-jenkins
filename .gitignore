@@ -5,3 +5,4 @@
 *.terraform
 *.zip
 .retry
+inventory-*

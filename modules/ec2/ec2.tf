@@ -49,12 +49,12 @@ resource "null_resource" "ansible" {
     provisioner "local-exec" {
       command = <<EOT
         echo [defaults] > ansible.cfg;
-        echo hostfile = ${var.env} >> ansible.cfg;
+        echo hostfile = inventory-${var.env} >> ansible.cfg;
         echo host_key_checking = False >> ansible.cfg;
         echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
         echo deprecation_warnings=False >> ansible.cfg;
-        echo [${var.env}] > ${var.env};
-        echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> ${var.env};
+        echo [${var.env}] > inventory-${var.env};
+        echo ${aws_instance.jenkins_master.public_ip} ansible_python_interpreter=/usr/bin/python3 >> inventory-${var.env};
         ansible-playbook -s test.yml
         EOT
       on_failure = "continue"
