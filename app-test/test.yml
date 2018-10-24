@@ -7,4 +7,6 @@
         name: ../ansible/roles/gather_facts
   tasks:
     - import_role:
+        name: ../ansible/roles/common
+    - import_role:
         name: ../ansible/roles/docker
