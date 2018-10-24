@@ -1,0 +1,4 @@
+---
+- name: OS details
+  debug:
+    msg: "System OS Family {{ ansible_os_family }}"
