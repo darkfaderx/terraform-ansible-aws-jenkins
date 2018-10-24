@@ -1,0 +1,2 @@
+[test]
+35.166.6.139 ansible_python_interpreter=/usr/bin/python3
