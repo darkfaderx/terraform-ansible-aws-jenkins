@@ -2,7 +2,7 @@ resource "aws_security_group" "jenkins_master" {
   name = "${var.name}"
   description = "Allows all traffic"
 
-  vpc_id = "${aws_vpc.vpc.id}"
+  # vpc_id = "${aws_vpc.vpc.id}"
 
   # SSH
   ingress {

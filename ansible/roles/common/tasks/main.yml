@@ -16,3 +16,19 @@
     - ebtables
     - ethtool
     - jq
+
+- name: Mount docker Storage Devices
+  mount:
+    src=/dev/xvdh
+    path=/var/lib/docker
+    fstype=ext4
+    opts="defaults"
+    state=mounted
+#
+# - name: Mount up device by UUID
+#   mount:
+#     path: /data
+#     src: /dev/xvdh
+#     fstype: ext4
+#     opts: noatime
+#     state: present
