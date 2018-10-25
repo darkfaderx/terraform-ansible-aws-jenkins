@@ -40,10 +40,14 @@ resource "aws_instance" "aws-instance" {
 
 resource "aws_volume_attachment" "aws-volume-attachment" {
   device_name = "/dev/sdh"
-  volume_id   = "${var.volume_id}"
+  volume_id   = "${var.dokcer_volume_id}"
   instance_id = "${aws_instance.aws-instance.id}"
 }
-
+resource "aws_volume_attachment" "aws-jenkins-volume-attachment" {
+  device_name = "/dev/sdi"
+  volume_id   = "${var.jenkins_volume_id}"
+  instance_id = "${aws_instance.aws-instance.id}"
+}
 resource "null_resource" "ansible" {
     provisioner "local-exec" {
       command = <<EOT

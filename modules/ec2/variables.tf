@@ -7,7 +7,10 @@ variable "name" {
 variable "key_name" {
   default = "test"
 }
-variable "volume_id" {
+variable "dokcer_volume_id" {
+  default = "test"
+}
+variable "jenkins_volume_id" {
   default = "test"
 }
 variable "instance_type" {
