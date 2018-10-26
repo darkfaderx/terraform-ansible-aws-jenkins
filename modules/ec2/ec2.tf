@@ -16,39 +16,15 @@ resource "aws_instance" "aws-instance" {
     key_name = "${var.key_name}"
     availability_zone = "${var.availability_zone}"
     associate_public_ip_address = true
-    user_data = "#!/bin/bash\nmkdir /data; mount /dev/xvdh /data;"
+    security_groups = ["${aws_security_group.aws-security-group.name}"]
+
 
     tags {
       Name = "${var.name}"
       Environment = "${var.env}"
       CreatedBy = "terraform"
     }
-  #  subnet_id = "${aws_subnet.jenkins.id}"
-    #security_group_ids = ["${aws_security_group.jenkins_master.id}"]
 
-
-
-
-    # This is where we configure the instance with ansible-playbook
-
-    # provisioner "local-exec" {
-    #
-    #   command = "echo ${aws_instance.jenkins_master.public_ip} >> ${var.env}"
-    #   #  command = "sleep 220; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ~/amazon/jijeesh/jijeesh.pem -i '${aws_instance.jenkins_master.public_ip},' -e 'ansible_python_interpreter=/usr/bin/python3' master.yml"
-    # }
-}
-
-resource "aws_volume_attachment" "aws-volume-attachment" {
-  device_name = "/dev/sdh"
-  volume_id   = "${var.dokcer_volume_id}"
-  instance_id = "${aws_instance.aws-instance.id}"
-}
-resource "aws_volume_attachment" "aws-jenkins-volume-attachment" {
-  device_name = "/dev/sdi"
-  volume_id   = "${var.jenkins_volume_id}"
-  instance_id = "${aws_instance.aws-instance.id}"
-}
-resource "null_resource" "ansible" {
     provisioner "local-exec" {
       command = <<EOT
         echo [defaults] > ansible.cfg;
@@ -72,8 +48,37 @@ resource "null_resource" "ansible" {
         EOT
       on_failure = "continue"
     }
-    depends_on = ["aws_instance.aws-instance"]
+
+
+
+    # This is where we configure the instance with ansible-playbook
+
+    # provisioner "local-exec" {
+    #
+    #   command = "echo ${aws_instance.jenkins_master.public_ip} >> ${var.env}"
+    #   #  command = "sleep 220; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ~/amazon/jijeesh/jijeesh.pem -i '${aws_instance.jenkins_master.public_ip},' -e 'ansible_python_interpreter=/usr/bin/python3' master.yml"
+    # }
 }
+
+resource "aws_volume_attachment" "aws-volume-attachment" {
+  device_name = "/dev/sdh"
+  volume_id   = "${var.dokcer_volume_id}"
+  instance_id = "${aws_instance.aws-instance.id}"
+}
+resource "aws_volume_attachment" "aws-jenkins-volume-attachment" {
+  device_name = "/dev/sdi"
+  volume_id   = "${var.jenkins_volume_id}"
+  instance_id = "${aws_instance.aws-instance.id}"
+}
+# resource "null_resource" "ansible" {
+#     provisioner "local-exec" {
+#       command = <<EOT
+#       ansible-playbook -s main.yml
+#         EOT
+#       on_failure = "continue"
+#     }
+#     depends_on = ["aws_instance.aws-instance"]
+# }
 output "public_ip" {
   value = "${aws_instance.aws-instance.public_ip}"
 }

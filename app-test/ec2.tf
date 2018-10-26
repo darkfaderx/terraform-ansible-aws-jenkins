@@ -7,8 +7,8 @@ module "ec2" {
   key_name = "jijeesh"
 	availability_zone = "${var.availability_zone}"
 	ami_id = "${data.aws_ami.ubuntu.id}"
-	dokcer_volume_id = "vol-0bce10b10a4ac920b"
-	jenkins_volume_id = "vol-0d693142ab5545b2d"
+	dokcer_volume_id = "vol-061d660d9af93ceec"
+	jenkins_volume_id = "vol-02ba69c10c896fe6b"
 	# vpc_id = "${module.vpc.vpc_id}"
 
 }

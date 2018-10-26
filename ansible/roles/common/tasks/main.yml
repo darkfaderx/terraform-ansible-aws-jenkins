@@ -30,18 +30,7 @@
     opts="defaults"
     state=mounted
 
-- name: Create a ext4 filesystem on /dev/xvdi
-  filesystem:
-    fstype: ext4
-    dev: /dev/xvdi
 
-- name: Mount Jenkins Home Storage Devices
-  mount:
-    src=/dev/xvdi
-    path=/jenkins-home
-    fstype=ext4
-    opts="defaults"
-    state=mounted
 #
 # - name: Mount up device by UUID
 #   mount:
