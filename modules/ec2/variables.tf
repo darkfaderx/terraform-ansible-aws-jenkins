@@ -4,6 +4,13 @@ variable "env" {
 variable "name" {
   default = "test"
 }
+variable "vm_user" {
+  default = "test"
+}
+variable "public_key_path" {
+  default = "test"
+}
+
 variable "key_name" {
   default = "test"
 }

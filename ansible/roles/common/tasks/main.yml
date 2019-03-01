@@ -17,18 +17,19 @@
     - ethtool
     - jq
 
-    - name: Create a ext4 filesystem on /dev/xvdh
-      filesystem:
-         fstype: ext4
-         dev: /dev/xvdh
-
-- name: Mount docker Storage Devices
-  mount:
-    src=/dev/xvdh
-    path=/var/lib/docker
-    fstype=ext4
-    opts="defaults"
-    state=mounted
+# 
+# - name: Create a ext4 filesystem on /dev/xvdh
+#       filesystem:
+#          fstype: ext4
+#          dev: /dev/xvdh
+#
+# - name: Mount docker Storage Devices
+#   mount:
+#     src=/dev/xvdh
+#     path=/var/lib/docker
+#     fstype=ext4
+#     opts="defaults"
+#     state=mounted
 
 
 #

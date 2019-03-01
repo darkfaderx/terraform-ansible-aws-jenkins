@@ -18,7 +18,7 @@ variable "target_region" {
 }
 
 variable "profile" {
-  default = "jijeesh"
+  default = "dinesh"
 }
 variable "log_retention" {
   default = 365
@@ -27,6 +27,16 @@ variable "retentionDays" {
   default = "365"
 }
 
+variable "public_key_path" {
+  default = "~/.ssh/id_rsa.pub"
+}
+variable "vm_user" {
+  default = "ubuntu"
+}
+
+variable "key_name" {
+  default = "terraform-ansible-key"
+}
 # variable "vpc_id" {
 #   type = "string"
 # }

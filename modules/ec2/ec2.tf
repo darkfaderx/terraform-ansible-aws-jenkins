@@ -9,6 +9,16 @@
 #   }
 # }
 
+locals {
+  # The default username for our AMI
+  vm_user = "${var.vm_user}"
+}
+
+resource "aws_key_pair" "auth" {
+  key_name   = "${var.key_name}"
+  public_key = "${file(var.public_key_path)}"
+}
+
 
 resource "aws_instance" "aws-instance" {
     ami           = "${var.ami_id}"
@@ -24,13 +34,21 @@ resource "aws_instance" "aws-instance" {
       Environment = "${var.env}"
       CreatedBy = "terraform"
     }
+    provisioner "remote-exec" {
+      # The connection will use the local SSH agent for authentication
+      inline = ["echo Successfully connected"]
 
+      # The connection block tells our provisioner how to communicate with the resource (instance)
+      connection {
+        user = "${local.vm_user}"
+      }
+    }
     provisioner "local-exec" {
       command = <<EOT
         echo [defaults] > ansible.cfg;
         echo hostfile = inventory-${var.env} >> ansible.cfg;
         echo host_key_checking = False >> ansible.cfg;
-        echo private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
+        echo #private_key_file = ~/amazon/jijeesh/${var.key_name}.pem >> ansible.cfg;
         echo deprecation_warnings=False >> ansible.cfg;
         echo #gathering = smart >> ansible.cfg;
         echo #fact_caching = jsonfile >> ansible.cfg;
@@ -53,23 +71,26 @@ resource "aws_instance" "aws-instance" {
 
     # This is where we configure the instance with ansible-playbook
 
-    # provisioner "local-exec" {
-    #
-    #   command = "echo ${aws_instance.jenkins_master.public_ip} >> ${var.env}"
-    #   #  command = "sleep 220; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ~/amazon/jijeesh/jijeesh.pem -i '${aws_instance.jenkins_master.public_ip},' -e 'ansible_python_interpreter=/usr/bin/python3' master.yml"
-    # }
+    provisioner "local-exec" {
+
+      #command = "echo ${aws_instance.jenkins_master.public_ip} >> ${var.env}"
+        # command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ${local.vm_user}  -i '${aws_instance.aws-instance.public_ip},' -e 'ansible_python_interpreter=/usr/bin/python3' master.yml"
+        command = "ansible-playbook -s main.yml"
+    }
 }
 
-resource "aws_volume_attachment" "aws-volume-attachment" {
-  device_name = "/dev/sdh"
-  volume_id   = "${var.dokcer_volume_id}"
-  instance_id = "${aws_instance.aws-instance.id}"
-}
-resource "aws_volume_attachment" "aws-jenkins-volume-attachment" {
-  device_name = "/dev/sdi"
-  volume_id   = "${var.jenkins_volume_id}"
-  instance_id = "${aws_instance.aws-instance.id}"
-}
+# resource "aws_volume_attachment" "aws-volume-attachment" {
+#   device_name = "/dev/sdh"
+#   volume_id   = "${var.dokcer_volume_id}"
+#   instance_id = "${aws_instance.aws-instance.id}"
+# }
+# resource "aws_volume_attachment" "aws-jenkins-volume-attachment" {
+#   device_name = "/dev/sdi"
+#   volume_id   = "${var.jenkins_volume_id}"
+#   instance_id = "${aws_instance.aws-instance.id}"
+# }
+
+
 # resource "null_resource" "ansible" {
 #     provisioner "local-exec" {
 #       command = <<EOT
